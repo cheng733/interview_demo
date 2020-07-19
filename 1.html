@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>上机题</title>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+    <script>
+    window.onload = function(){
+          var app = new Vue({
+            el: '#app',
+            data: {
+                result:[],
+                newArray:[],
+                count: 5,
+                input: '',
+                isShow:false,
+                test:'',
+                dialogFormVisible: false,
+                filterDataName:'',
+                tableData: [{
+                    fileName: 'aa',
+                    price: '￥100.00',
+                    }, {
+                    fileName: 'aa',
+                    price: '￥100.00',
+                    }, {
+                    fileName: 'aa',
+                    price: '￥100.00',
+                    }, {
+                    fileName: 'aa',
+                    price: '￥100.00',
+                    }],
+                    clos:[
+                    {title:'图文',name:'photo'},
+                    {title:'音频',name:'audio'},
+                    {title:'视频',name:'vedio'},
+                    {title:'录播',name:'aa'},{title:'直播',name:'bb'}],
+                    showData:{
+                        'first':{
+                        'total':10,data:[
+                        {url:'#',title:'aa',price:100},
+                        {url:'#',title:'ba',price:100},
+                        {url:'#',title:'vv',price:200},
+                        {url:'#',title:'nn',price:400},
+                        {url:'#',title:'k',price:600},
+                        {url:'#',title:'o',price:900},
+                        {url:'#',title:'p',price:1000},
+                        {url:'#',title:'as',price:600},
+                        {url:'#',title:'io',price:600},
+                        {url:'#',title:'kp',price:600}]
+            }},
+              form: {
+                    name: '',
+                    region: '',
+                    date1: '',
+                    date2: '',
+                    delivery: false,
+                    type: [],
+                    resource: '',
+                    desc: '',
+        },
+            formLabelWidth: '120px',
+                activeName: 'first',
+                checkbox:[],
+          
+        },
+            methods:{
+                addCourse(){
+                   this.isShow = true
+                   this.dialogFormVisible = true
+                   this.count = 5
+                   this.checkbox = []
+                   this.result = []
+      },
+            handleClick(tab, event) {
+                this.filterDataName = event.target.innerHTML
+                console.log(this.filterDataName)
+      },
+            searchHandle(){
+                this.result =[]
+                const input = this.input.trim()
+                let backupArray = this.backupArray
+                 this.result = backupArray.filter(array => array.title === input||array.price == input)
+                console.log(this.result,'result')
+    
+           
+        },
+            confirmHandle(){
+                this.isShow = false
+
+        },
+            handleScroll(){
+                const showData = this.showData
+                const activeName = this.activeName
+                const total = showData[activeName]['total']
+                let count = this.count
+                if(total>count){
+                    this.count+=5
+                }
+                
+            },
+            cancelHandle(){
+                this.input = ''
+                this.dialogFormVisible = false
+            },
+            confirmHandle(){
+                let checkbox = this.checkbox
+
+                const array = []
+                checkbox.filter((check,index) => {check?array.push(index):''})
+
+                console.log('array',array,this.result)
+                let tableData = this.tableData
+                if(this.result[0]){
+                     const arr1 = array.map(arr => this.result[arr])
+                    arr1.map(arr => (tableData.unshift({
+                    fileName: arr.title,
+                    price: `￥${arr.price}.00`,
+                    })))
+                }else{
+                    let backupArray = this.backupArray
+                     const arr1 = array.map(arr => backupArray[arr])
+                    arr1.map(arr => (tableData.unshift({
+                    fileName: arr.title,
+                    price: `￥${arr.price}.00`,
+                    })))
+                }
+             
+                console.log('tableData',tableData)
+                this.input = ''
+                this.dialogFormVisible = false
+            },
+                
+    },
+    computed:{
+            backupArray(){
+                console.log(this.count,'count')
+                const showData = this.showData
+                console.log(showData,'showData')
+                const activeName = this.activeName
+                console.log(activeName,'activeName')
+                let data = showData[activeName]['data']
+                console.log(data,'data')
+                let newArray = this.newArray
+                let result = this.result
+                console.log('result122222',result)
+                if(result[0]){
+                    this.count = result.length
+                    for(var i =0;i < this.count;i++){
+                     newArray[i] = result[i]
+                     console.log('-------------------',result,newArray)
+                   }
+                   
+                }else{
+                     for(var i =0;i < this.count;i++){
+                        newArray[i] = data[i] 
+                }
+                }
+                console.log(newArray,'newArray',this.count)
+                return newArray
+            }
+            },
+        updated(){
+            if(document.getElementsByClassName('x')[0]){
+                document.getElementsByClassName('x')[0].addEventListener('scroll',this.handleScroll)
+            }
+        }
+    })
+    }
+  
+</script>
+    <style>
+        [v-clock]{
+            display: none;
+        }
+        #app{
+            width: 100%;
+            background: #fff;
+        }
+        li {
+            list-style: none;
+        }
+        #modal {
+            position: absolute;
+            z-index: 999;
+            top:50px;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 1px solid #000;
+        }
+        .el-input__inner {
+            width: 369px;
+        }
+        .el-input {
+            width: 369px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app" v-cloak>
+    <el-button type="primary" @click="addCourse">选择课程</el-button>
+    <el-table
+      :data="tableData"
+      style="width: 100%">
+        <el-table-column
+        prop="fileName"
+        label="文件名"
+        width="180">
+        </el-table-column>
+        <el-table-column
+        prop="price"
+        label="价格"
+        width="180">
+        </el-table-column>
+    </el-table>
+   <el-dialog title="添加课程" :visible.sync="dialogFormVisible">
+    <el-input
+  placeholder="请输入内容"
+  v-model="input"
+  clearable>
+</el-input>
+<el-button type="primary" @click="searchHandle">Search</el-button>
+  <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tab-pane label="图文" name="first">
+        <ul style="overflow:scroll;height: 335px" class="x">
+        <li v-for="i in count">
+            <input
+            v-model="checkbox[i-1]"
+            type="checkbox">
+            </input>
+        <img :src="backupArray[i-1].url"/><span>{{backupArray[i-1].title}}</span><span>{{backupArray[i-1].price}}</span>
+        <el-divider></el-divider>
+    </li>
+  </ul>
+    </el-tab-pane>
+    <el-tab-pane label="音频" name="second">音频</el-tab-pane>
+    <el-tab-pane label="视频" name="third">视频</el-tab-pane>
+    <el-tab-pane label="直播" name="fourth">直播</el-tab-pane>
+    <el-tab-pane label="录播" name="fifth">录播</el-tab-pane>
+  </el-tabs>
+  <div slot="footer" class="dialog-footer">
+    <el-button @click="cancelHandle">取 消</el-button>
+    <el-button type="primary" @click="confirmHandle">确 定</el-button>
+  </div>
+</el-dialog>
+</body>
+</html>
